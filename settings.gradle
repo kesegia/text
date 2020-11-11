@@ -1,0 +1,6 @@
+rootProject.name = 'text'
+include 'text-common'
+include 'text-dao'
+include 'text-service'
+include 'text-controller'
+

@@ -1,0 +1,92 @@
+buildscript {
+    ext {
+        springBootVersion = "2.3.5.RELEASE"
+        dependencyManagementPluginVersion = '1.0.10.RELEASE'
+    }
+
+    repositories {
+        maven { url "http://maven.pdd.net/repository/maven-public/" }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath "io.spring.gradle:dependency-management-plugin:$dependencyManagementPluginVersion"
+    }
+}
+
+plugins {
+    id 'base'
+    id 'java'
+    id 'idea'
+    id 'application'
+}
+
+group = 'com.misaka'
+version = '0.0.1-SNAPSHOT'
+
+subprojects {
+    apply plugin: "java"
+    apply plugin: "io.spring.dependency-management"
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+    /**
+     * 指定子模块所使用仓库的路径
+     * */
+    repositories {
+        maven{url "http://maven.aliyun.com/nexus/content/groups/public"}
+        mavenCentral()
+    }
+    /**
+     * 引入之模块jar包
+     */
+    dependencies {
+    }
+}
+
+project(":text-controller") {
+    dependencies {
+        implementation project(":text-service")
+        implementation project(":text-dao")
+        implementation project(":text-common")
+
+        implementation 'org.springframework.boot:spring-boot-starter-web:2.3.5.RELEASE'
+    }
+}
+
+project(":text-service") {
+    dependencies {
+        implementation project(":text-dao")
+        implementation project(":text-common")
+
+        //引入Junit 单元测试
+        testCompile 'junit:junit:4.12'
+        //引入springboot start test
+        testImplementation('org.springframework.boot:spring-boot-starter-test:2.3.5.RELEASE') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+    }
+}
+
+project(":text-dao") {
+    dependencies {
+        implementation project(":text-common")
+
+        compile "org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3"
+        compile 'mysql:mysql-connector-java:8.0.18'
+    }
+}
+
+project(":text-common") {
+    dependencies {
+        compile "com.alibaba:fastjson:1.2.73"
+        compile "org.projectlombok:lombok:1.18.12"
+        annotationProcessor "org.projectlombok:lombok:1.18.12"
+    }
+}
